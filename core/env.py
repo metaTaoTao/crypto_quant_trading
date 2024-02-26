@@ -149,6 +149,8 @@ class EMarketSourceType(Enum):
     E_MARKET_SOURCE_nt = 2
     """新浪 美股"""
     E_MARKET_SOURCE_sn_us = 3
+    """Yahoo"""
+    E_MARKET_SOURCE_yh = 4
 
     """新浪 国内期货"""
     E_MARKET_SOURCE_sn_futures = 100
@@ -159,8 +161,10 @@ class EMarketSourceType(Enum):
     E_MARKET_SOURCE_hb_tc = 200
 
 
+
+
 """默认设置数据源使用E_MARKET_SOURCE_bd"""
-g_market_source = EMarketSourceType.E_MARKET_SOURCE_bd
+g_market_source = EMarketSourceType.E_MARKET_SOURCE_yh
 
 """自定义的私有数据源类，默认None"""
 g_private_data_source = None

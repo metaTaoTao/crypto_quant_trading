@@ -16,7 +16,7 @@ from core.env import EMarketTargetType, EMarketSubType
 from core import env
 from market import network
 from market.data_base import StockBaseMarket, SupportMixin, FuturesBaseMarket, TCBaseMarket
-from market.data_parser import BDParser, TXParser, NTParser, SNUSParser
+from market.data_parser import BDParser, TXParser, NTParser, SNUSParser, YahooParser
 from market.data_parser import SNFuturesParser, SNFuturesGBParser, HBTCParser
 from utils import str_util, date_util, md5
 from utils.dt_util import catch_error
@@ -52,7 +52,32 @@ def query_symbol_from_pinyin(pinyin):
             end = code.find('.')
         return code[start:end]
 
+class YahooApi(StockBaseMarket, SupportMixin):
+    """Yahoo Data Sources"""
+    def __init__(self, symbol):
+        """
+        :param symbol: Symbol类型对象
+        """
+        super(YahooApi, self).__init__(symbol)
+        self._action_id = int(date_util.time_seconds())
+        self._version2_log_cnt = 0
+        self.data_parser_cls = YahooParser
 
+    def kline(self, n_folds=2, start=None, end=None):
+        """日k线接口"""
+        import yfinance as yf
+        df = yf.download(self._symbol.symbol_code, start=start, end=end, interval='1d')
+        kl_df = self.data_parser_cls.parse(df)
+        return StockBaseMarket._fix_kline_pd(kl_df, n_folds, start, end)
+
+    def minute(self, n_folds=5, *args, **kwargs):
+        self._version2_log_cnt += 1
+        cuid = str_util.create_random_with_num_low(40)
+        log_id = self._action_id + self._version2_log_cnt * 66
+        device = random_from_list(StockBaseMarket.K_DEV_MODE_LIST)
+        url = BDApi.MINUTE_NET_5D % (cuid, device, str(log_id), str(self._action_id), self._symbol.value)
+
+        return network.get(url=url, timeout=K_TIME_OUT).json()
 class BDApi(StockBaseMarket, SupportMixin):
     """bd数据源，支持港股，美股，a股"""
 

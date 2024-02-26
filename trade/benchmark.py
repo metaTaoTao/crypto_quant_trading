@@ -105,3 +105,7 @@ class Benchmark(PickleStateMixin):
             raise ValueError('CapitalClass init benchmark kl_pd is None')
         return kl_pd
 """
+
+if __name__ == '__main__':
+    b = Benchmark(start='2023-01-01', end='2024-01-01')
+    s=1

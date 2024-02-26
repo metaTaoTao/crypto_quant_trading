@@ -8,7 +8,7 @@ import logging
 import numpy as np
 
 from market.data_base import BaseMarket
-from market.data_feed import BDApi, TXApi, NTApi, HBApi, SNUSApi, SNFuturesApi, SNFuturesGBApi
+from market.data_feed import YahooApi, BDApi, TXApi, NTApi, HBApi, SNUSApi, SNFuturesApi, SNFuturesGBApi
 from market.symbol import Symbol
 from market.symbol import code_to_symbol
 from core import env
@@ -26,7 +26,8 @@ except ImportError:
 
 
 """内置数据源source_dict"""
-source_dict = {EMarketSourceType.E_MARKET_SOURCE_bd.value: BDApi,
+source_dict = {EMarketSourceType.E_MARKET_SOURCE_yh.value: YahooApi,
+               EMarketSourceType.E_MARKET_SOURCE_bd.value: BDApi,
                EMarketSourceType.E_MARKET_SOURCE_tx.value: TXApi,
                EMarketSourceType.E_MARKET_SOURCE_nt.value: NTApi,
                EMarketSourceType.E_MARKET_SOURCE_sn_us.value: SNUSApi,

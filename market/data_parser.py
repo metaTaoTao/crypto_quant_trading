@@ -9,6 +9,8 @@ import pandas as pd
 
 from .symbol import EMarketTargetType
 from utils import date_util
+from datetime import datetime as dt
+
 
 def del_columns(df, columns):
     """
@@ -229,6 +231,7 @@ class SNFuturesParser(object):
 @DataParseWrap()
 class SNFuturesGBParser(object):
     """示例国际期货数据源解析类，被类装饰器DataParseWrap装饰"""
+
     # noinspection PyUnusedLocal
     def __init__(self, symbol, json_dict):
         """
@@ -341,3 +344,15 @@ class BDParser(object):
 
         except Exception as e:
             logging.exception(e)
+
+
+class YahooParser(object):
+    @classmethod
+    def parse(cls, df):
+        df = df.reset_index()
+        df = df.rename(columns={'index': 'key'})
+        df.columns = df.columns.str.lower()
+        df['date_week'] = df['date'].apply(lambda x: date_util.week_of_date(date_util.timestamp_to_str(x)))
+        df['date'] = df['date'].apply(lambda x: date_util.date_str_to_int(date_util.timestamp_to_str(x)))
+        df['p_change'] = np.log(df.close / df.close.shift(1)) * 100
+        return df

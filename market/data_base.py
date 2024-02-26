@@ -29,7 +29,7 @@ class SupportMixin(object):
         if symbol is None:
             symbol = self._symbol
 
-        if isinstance(symbol, six.string_types):
+        if isinstance(symbol, str):
             # 如果是str，使用_support_market返回的value组成字符串数组，进行成员测试
             if symbol in [market.value for market in self._support_market()]:
                 return True

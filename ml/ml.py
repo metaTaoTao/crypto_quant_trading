@@ -342,7 +342,7 @@ class ML(object):
         """
         self.estimator = MLCreater()
         # 如果传递进来的是字符串类型，转换为EMLFitType
-        if isinstance(fiter_type, six.string_types):
+        if isinstance(fiter_type, str):
             fiter_type = EMLFitType(fiter_type)
         self.x = x
         self.y = y
@@ -1173,7 +1173,7 @@ class ML(object):
             self.fit(**kwargs)
 
         fiter = self.get_fiter()
-        if not isinstance(callback, six.string_types):
+        if not isinstance(callback, str):
             # callback必须是字符串类型
             self.log_func('callback must str, not {}'.format(type(callback)))
             return

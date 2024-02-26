@@ -372,7 +372,7 @@ class IndexSymbol(object):
     # 美股大盘DJI Symbol对象
     DJI = Symbol(EMarketTargetType.E_MARKET_TARGET_US, EMarketSubType.US_N, '.DJI')
     # 美股大盘IXIC Symbol对象
-    IXIC = Symbol(EMarketTargetType.E_MARKET_TARGET_US, EMarketSubType.US_N, '.IXIC')
+    IXIC = Symbol(EMarketTargetType.E_MARKET_TARGET_US, EMarketSubType.US_N, 'SPY')
     # 美股大盘INX Symbol对象
     INX = Symbol(EMarketTargetType.E_MARKET_TARGET_US, EMarketSubType.US_N, '.INX')
 
