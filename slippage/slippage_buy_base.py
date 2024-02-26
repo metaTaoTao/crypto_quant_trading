@@ -10,8 +10,7 @@ import functools
 
 import numpy as np
 
-__author__ = '阿布'
-__weixin__ = 'abu_quant'
+
 
 
 class SlippageBuyBase(metaclass=ABCMeta):
@@ -20,7 +19,7 @@ class SlippageBuyBase(metaclass=ABCMeta):
     def __init__(self, kl_pd_buy, factor_name):
         """
         :param kl_pd_buy: 交易当日的交易数据
-        :param factor_name: ABuFactorBuyBases子类实例对象的factor_name
+        :param factor_name: FactorBuyBases子类实例对象的factor_name
         """
         self.buy_price = np.inf
         self.kl_pd_buy = kl_pd_buy
@@ -42,11 +41,11 @@ class SlippageBuyBase(metaclass=ABCMeta):
         """
         pass
 
-"""是否开启涨停板滑点买入价格特殊处理, 默认关闭，外部修改如：abupy.slippage.sbb.g_enable_limit_up = True"""
+"""是否开启涨停板滑点买入价格特殊处理, 默认关闭，外部修改如：py.slippage.sbb.g_enable_limit_up = True"""
 g_enable_limit_up = False
 """
     初始设定涨停板买入成交概率100%，这里也可以在计算完一次概率后，再使用成交量做二次概率计算，
-    外部修改如：abupy.slippage.sbb.g_limit_up_deal_chance = 0.5，即修改为买入概率50%
+    外部修改如：py.slippage.sbb.g_limit_up_deal_chance = 0.5，即修改为买入概率50%
 """
 g_limit_up_deal_chance = 1
 """在集合竞价阶段价格已经达成涨停的情况下买入成功的概率，默认0.2, 即20%成功概率"""

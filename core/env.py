@@ -21,7 +21,7 @@ import pandas as pd
 g_is_mac_os = platform.system().lower().find("windows") < 0 and sys.platform != "win32"
 """ipython，是否ipython运行环境"""
 g_is_ipython = True
-"""主进程pid，使用并行时由于ABuEnvProcess会拷贝主进程注册了的模块信息，所以可以用g_main_pid来判断是否在主进程"""
+"""主进程pid，使用并行时由于EnvProcess会拷贝主进程注册了的模块信息，所以可以用g_main_pid来判断是否在主进程"""
 g_main_pid = os.getpid()
 
 try:
@@ -82,7 +82,7 @@ if g_ignore_all_warnings:
 
 # ＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊ 数据目录 start ＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
 """
-    abu 文件目录根目录
+     文件目录根目录
     windows应该使用磁盘空间比较充足的盘符，比如：d://, e:/, f:///
 
     eg:
@@ -96,20 +96,20 @@ root_drive = path.expanduser('~')
 # noinspection PyTypeChecker
 
 
-"""abu数据缓存主目录文件夹"""
-g_project_root = path.join(root_drive, 'abu')
-"""abu数据文件夹 ~/abu/data"""
+"""数据缓存主目录文件夹"""
+g_project_root = path.join(root_drive, '')
+"""数据文件夹 ~//data"""
 g_project_data_dir = path.join(g_project_root, 'data')
-"""abu日志文件夹 ~/abu/log"""
+"""日志文件夹 ~//log"""
 g_project_log_dir = path.join(g_project_root, 'log')
-"""abu数据库文件夹 ~/abu/db"""
+"""数据库文件夹 ~//db"""
 g_project_db_dir = path.join(g_project_root, 'db')
-"""abu缓存文件夹 ~/abu/cache"""
+"""缓存文件夹 ~//cache"""
 g_project_cache_dir = path.join(g_project_data_dir, 'cache')
-"""abu项目数据主文件目录，即项目中的RomDataBu位置"""
-g_project_rom_data_dir = path.join(path.dirname(path.abspath(path.realpath(__file__))), '../RomDataBu')
+"""项目数据主文件目录，即项目中的RomDat位置"""
+g_project_rom_data_dir = path.join(path.dirname(path.abspath(path.realpath(__file__))), '../RomDat')
 
-"""abu日志文件 ~/abu/log/info.log"""
+"""日志文件 ~//log/info.log"""
 g_project_log_info = path.join(g_project_log_dir, 'info.log')
 
 """hdf5做为金融时间序列存储的路径"""
@@ -118,9 +118,9 @@ g_project_kl_df_data = path.join(g_project_data_dir, 'df_kl.h5')
 _p_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.path.pardir))
 
 # 不再使用hdf5做为默认，有windows用户的hdf5环境有问题
-"""使用书中相同的沙盒数据环境，RomDataBu/csv内置的金融时间序列文件"""
-# g_project_kl_df_data_example = os.path.join(_p_dir, 'RomDataBu/df_kl.h5')
-g_project_kl_df_data_example = os.path.join(_p_dir, 'RomDataBu/csv')
+"""使用书中相同的沙盒数据环境，RomDat/csv内置的金融时间序列文件"""
+# g_project_kl_df_data_example = os.path.join(_p_dir, 'RomDat/df_kl.h5')
+g_project_kl_df_data_example = os.path.join(_p_dir, 'RomDat/csv')
 # ＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊ 数据目录 end ＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
 
 
@@ -251,7 +251,7 @@ if g_market_target == EMarketTargetType.E_MARKET_TARGET_TC:
 # TODO EMarketDataSplitMode移动到市场请求相关对应的模块中
 class EMarketDataSplitMode(Enum):
     """
-        ABuSymbolPd中请求参数，关于是否需要与基准数据对齐切割
+        SymbolPd中请求参数，关于是否需要与基准数据对齐切割
     """
     """直接取出所有data，不切割，即外部需要切割"""
     E_DATA_SPLIT_UNDO = 0
@@ -274,7 +274,7 @@ class EMarketDataFetchMode(Enum):
 
 """
     金融时间数据获取模式模块设置g_data_fetch_mode，默认为E_DATA_FETCH_NORMAL，实际上默认值建议
-    为E_DATA_FETCH_FORCE_LOCAL，所有数据提前使用ABu.run_kl_update完成updtae，之后使用本地数据回测，
+    为E_DATA_FETCH_FORCE_LOCAL，所有数据提前使用.run_kl_update完成updtae，之后使用本地数据回测，
     原因：
     1. mac os 10.9 later 多进程 ＋ numpy有系统bug
     2. hdf5并行容易写坏文件
@@ -289,22 +289,22 @@ _g_enable_example_env_ipython = False
 
 def enable_example_env_ipython(show_log=True, check_cn=True):
     """
-    只为在ipython example 环境中运行与书中一样的数据，即读取RomDataBu/csv下的数据
+    只为在ipython example 环境中运行与书中一样的数据，即读取RomDat/csv下的数据
 
-    初始内置在RomDataBu/csv.zip下的数据只有zip压缩包，因为git上面的文件最好不要超过50m，
+    初始内置在RomDat/csv.zip下的数据只有zip压缩包，因为git上面的文件最好不要超过50m，
     内置测试数据，包括美股，a股，期货，比特币，港股数据初始化在csv.zip中，通过解压zip
     之后将测试数据为csv(老版本都是使用hdf5，但windows用户有些hdf5环境有问题)
-    show_log: 是否显示enable example env will only read RomDataBu/df_kl.h5
+    show_log: 是否显示enable example env will only read RomDat/df_kl.h5
     check_cn: 是否检测运行环境有中文路径
     """
 
     if not os.path.exists(g_project_kl_df_data_example):
         # 如果还没有进行解压，开始解压csv.zip
-        data_example_zip = os.path.join(_p_dir, 'RomDataBu/csv.zip')
+        data_example_zip = os.path.join(_p_dir, 'RomDat/csv.zip')
         try:
             from zipfile import ZipFile
             zip_csv = ZipFile(data_example_zip, 'r')
-            unzip_dir = os.path.join(_p_dir, 'RomDataBu/')
+            unzip_dir = os.path.join(_p_dir, 'RomDat/')
             for csv in zip_csv.namelist():
                 zip_csv.extract(csv, unzip_dir)
             zip_csv.close()
@@ -318,25 +318,25 @@ def enable_example_env_ipython(show_log=True, check_cn=True):
     g_data_fetch_mode = EMarketDataFetchMode.E_DATA_FETCH_FORCE_LOCAL
     if check_cn:
         try:
-            from ..UtilBu.ABuStrUtil import str_is_cn, to_unicode
+            from ..UtilBu.StrUtil import str_is_cn, to_unicode
             if str_is_cn(str(__file__)):
                 # 检测到运行环境路径中含有中文，严重错误，将出错，使用中文警告
-                msg = u'严重错误！当前运行环境下有中文路径，abu将无法正常运行！请不要使用中文路径名称, 当前环境为{}'.format(
+                msg = u'严重错误！当前运行环境下有中文路径，将无法正常运行！请不要使用中文路径名称, 当前环境为{}'.format(
                     to_unicode(str(__file__)))
                 logging.info(msg)
                 return
         except:
             # 没有必要显示log给用户，如果是其它编码的字符路径会进到这里
             # logging.exception(e)
-            msg = 'error！non English characters in the current running environment,abu will not work properly!'
+            msg = 'error！non English characters in the current running environment, will not work properly!'
             logging.info(msg)
     if show_log:
-        logging.info('enable example env will only read RomDataBu/csv')
+        logging.info('enable example env will only read RomDat/csv')
 
 
 def disable_example_env_ipython(show_log=True):
     """
-    只为在ipython example 环境中运行与书中一样的数据。，即读取RomDataBu/df_kl.h5下的数据
+    只为在ipython example 环境中运行与书中一样的数据。，即读取RomDat/df_kl.h5下的数据
     show_log: 是否显示disable example env
     """
     global _g_enable_example_env_ipython, g_data_fetch_mode
@@ -391,7 +391,7 @@ g_split_tt_n_folds = 10
 
 
 # ＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊主裁 start ＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
-# TODO 内置ump的设置move到ABuUmpManager中
+# TODO 内置ump的设置move到UmpManager中
 
 """是否开启裁判拦截机制: 主裁deg，默认关闭False"""
 g_enable_ump_main_deg_block = False

@@ -12,7 +12,13 @@ import pandas as pd
 
 from .dt_util import warnings_filter
 # noinspection PyUnresolvedReferences
-import pickle, Pickler, Unpickler, as_bytes
+import pickle
+Pickler = pickle._Pickler
+Unpickler = pickle._Unpickler
+def as_bytes(s):
+    if isinstance(s, bytes):
+        return s
+    return s.encode('latin1')
 
 """HDF5_COMP_LEVEL：压缩级别：0-9，如果修改了压缩级别，需要删除之前的物理文件"""
 HDF5_COMP_LEVEL = 4
@@ -171,7 +177,7 @@ def __end_batch_h5s():
 def batch_h5s(h5_fn, mode='a'):
     """
     使用装饰器方式对hdf5操作进行批量处理，外部使用：
-        eg： 详见ABuSymbolPd.py
+        eg： 详见SymbolPd.py
             @batch_h5s(h5s_fn)
             def _batch_save():
                 for df_dict in df_dicts:

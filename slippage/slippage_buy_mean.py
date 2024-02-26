@@ -9,7 +9,7 @@ import numpy as np
 
 from slippage.slippage_buy_base import SlippageBuyBase, slippage_limit_up
 
-"""外部修改默认下跌阀值使用如：abupy.slippage.sbm.g_open_down_rate = 0.02"""
+"""外部修改默认下跌阀值使用如：py.slippage.sbm.g_open_down_rate = 0.02"""
 g_open_down_rate = 0.07
 
 

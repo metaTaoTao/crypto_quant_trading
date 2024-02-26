@@ -6,16 +6,16 @@
 from abc import ABCMeta, abstractmethod
 from market.market import MarketMixin
 
-"""每一笔交易最大仓位比例设置，外部可通过如：abupy.beta.position.g_pos_max = 0.5修改最大每一笔交易最大仓位比例，默认75%"""
+"""每一笔交易最大仓位比例设置，外部可通过如：py.beta.position.g_pos_max = 0.5修改最大每一笔交易最大仓位比例，默认75%"""
 g_pos_max = 0.75
 """
     保证金最小比例，默认1，即不使用融资，不会触发Margin Call
     在期货数据中有每种商品最少保证金比例，可使用设置
-    外部可通过如：abupy.beta.position.g_deposit_rate = 0.5
+    外部可通过如：py.beta.position.g_deposit_rate = 0.5
 """
 g_deposit_rate = 1
 """
-    买入因子全局默认仓位管理类，默认None的情况下会使用AbuAtrPosition作为默认仓位管理类.
+    买入因子全局默认仓位管理类，默认None的情况下会使用AtrPosition作为默认仓位管理类.
 
     和卖出因子，选股因子不同，一个买入因子可以对应多个卖出因子，多个选股因子，但一个买入
     因子只能对应一个仓位管理类，可以是全局仓位管理，也可以是针对买入因子的独有附属仓位管理
@@ -69,7 +69,7 @@ class PositionBase(MarketMixin):
     def fit_position(self, factor_object):
         """
         fit_position计算的结果是买入多少个单位（股，手，顿，合约）具体计算子类实现
-        :param factor_object: ABuFactorBuyBases实例对象
+        :param factor_object: FactorBuyBases实例对象
         :return:买入多少个单位（股，手，顿，合约）
         """
         pass

@@ -6,9 +6,9 @@
 from beta.position_base import PositionBase
 
 """
-    默认0.1即10% 外部可通过如：abupy.beta.atr.g_atr_pos_base = 0.01修改仓位基础配比
+    默认0.1即10% 外部可通过如：py.beta.atr.g_atr_pos_base = 0.01修改仓位基础配比
     需要注意外部其它自定义仓位管理类不要随意使用模块全局变量，AtrPosition特殊因为注册
-    在ABuEnvProcess中在多进程启动时拷贝了模块全局设置内存
+    在EnvProcess中在多进程启动时拷贝了模块全局设置内存
 """
 g_atr_pos_base = 0.1
 
@@ -23,7 +23,7 @@ class AtrPosition(PositionBase):
         """
         fit_position计算的结果是买入多少个单位（股，手，顿，合约）
         计算：（常数价格 ／ 买入价格）＊ 当天交易日atr21
-        :param factor_object: ABuFactorBuyBases实例对象
+        :param factor_object: FactorBuyBases实例对象
         :return: 买入多少个单位（股，手，顿，合约）
         """
         std_atr = (self.atr_base_price / self.bp) * self.kl_pd_buy['atr21']

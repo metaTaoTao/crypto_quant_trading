@@ -79,7 +79,7 @@ def _calc_atr_from_pd(high, low, close, time_period=14):
     # 返回atr值序列，np.array对象
     return atr.values
 
-"""通过在ABuNDBase中尝试import talib来统一确定指标计算方式"""
+"""通过在NDBase中尝试import talib来统一确定指标计算方式"""
 calc_atr = _calc_atr_from_pd if g_calc_type == ECalcType.E_FROM_PD else _calc_atr_from_ta
 
 
@@ -181,8 +181,8 @@ def plot_atr_from_klpd(kl_pd, with_points=None, with_points_ext=None, **kwargs):
 
 def plot_atr_from_order(order, date_ext=120, **kwargs):
     """
-    封装ABuNDBase中的plot_from_order与模块中绘制技术指标的函数，完成技术指标可视化及标注买入卖出点位
-    :param order: AbuOrder对象转换的pd.DataFrame对象or pd.Series对象
+    封装NDBase中的plot_from_order与模块中绘制技术指标的函数，完成技术指标可视化及标注买入卖出点位
+    :param order: Order对象转换的pd.DataFrame对象or pd.Series对象
     :param date_ext: int对象 eg. 如交易在2015-06-01执行，如date_ext＝120，择start向前推120天，end向后推120天
     :param kwargs: 绘制技术指标需要的其它关键字参数，time_period, 最终透传给plot_atr
     """

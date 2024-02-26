@@ -5,7 +5,7 @@
 
 import sys
 import logging
-
+import pickle
 import pandas as pd
 # noinspection PyUnresolvedReferences
 from core import env
@@ -33,14 +33,14 @@ class PickleStateMixin(object):
     _python_version = str(sys.version_info)
     # windows or mac os
     _is_mac_os = env.g_is_mac_os
-    # 是否考虑本身的版本version, 默认不考虑，忽略abupy的版本号
-    skip_abupy_version = True
+    # 是否考虑本身的版本version, 默认不考虑，忽略py的版本号
+    skip_py_version = True
 
     def __getstate__(self):
         from .. import __version__
-        _abupy_version = __version__
+        _py_version = __version__
         self.pick_extend_work()
-        return dict(self.__dict__.items(), _abupy_version=_abupy_version,
+        return dict(self.__dict__.items(), _py_version=_py_version,
                     _pickle_highest_protocol=self._pickle_highest_protocol,
                     _python_version=self._python_version,
                     _is_mac_os=self._is_mac_os)
@@ -50,37 +50,37 @@ class PickleStateMixin(object):
 
         # 从本地序列化文件中读取的pickle的最高支持版本, 默认0
         pickle_highest_protocol = state.pop("_pickle_highest_protocol", 0)
-        # 从本地序列化文件中读取的abupy的版本号, 默认0.0.1
-        old_abupy_version = state.pop("_abupy_version", '0.0.1')
+        # 从本地序列化文件中读取的py的版本号, 默认0.0.1
+        old_py_version = state.pop("_py_version", '0.0.1')
         # 从本地序列化文件中读取的python版本号, 默认2.7.0
         python_version = state.pop("_python_version", '2.7.0')
         # 从本地序列化文件中读取的平台信息, 默认False，即windows
         platform_version = state.pop("_is_mac_os", False)
 
-        if self.skip_abupy_version:
-            # 忽略abupy的版本号
-            _abupy_version = old_abupy_version
+        if self.skip_py_version:
+            # 忽略py的版本号
+            _py_version = old_py_version
         else:
             from .. import __version__
-            _abupy_version = __version__
+            _py_version = __version__
 
         if self._pickle_highest_protocol != pickle_highest_protocol \
-                or _abupy_version != old_abupy_version or self._python_version != python_version \
+                or _py_version != old_py_version or self._python_version != python_version \
                 or self._is_mac_os != platform_version:
             """只要有一个信息不一致，打印info，即有序列化读取失败的可能"""
             logging.info(
                 "unpickle {} : "
                 "old pickle_highest_protocol={},"
                 "now pickle_highest_protocol={}, "
-                "old abupy_version={}, "
-                "now abupy_version={}, "
+                "old py_version={}, "
+                "now py_version={}, "
                 "old python_version={}, "
                 "now python_version={}, "
                 "old platform_version={}, "
                 "now platform_version={}, ".format(
                     self.__class__.__name__,
                     pickle_highest_protocol, self._pickle_highest_protocol,
-                    old_abupy_version, _abupy_version,
+                    old_py_version, _py_version,
                     python_version, self._python_version,
                     platform_version, self._is_mac_os))
 

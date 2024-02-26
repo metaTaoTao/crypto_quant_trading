@@ -394,7 +394,7 @@ def scaler_xy(x, y, type_look='look_max', mean_how=True):
                     2014-07-30    16.83
                     2014-07-31    16.06
 
-            x, y = ABuScalerUtil.scaler_xy(x, y, type_look='look_max', mean_how=False)
+            x, y = scaler_util.scaler_xy(x, y, type_look='look_max', mean_how=False)
 
             output y:
                     2014-07-25    208.3811
@@ -403,7 +403,7 @@ def scaler_xy(x, y, type_look='look_max', mean_how=True):
                     2014-07-30    228.9200
                     2014-07-31    218.4465
 
-            x, y = ABuScalerUtil.scaler_xy(x, y, type_look='look_max', mean_how=True)
+            x, y = scaler_util.scaler_xy(x, y, type_look='look_max', mean_how=True)
 
             output y:
                     2014-07-25    212.6588
@@ -412,7 +412,7 @@ def scaler_xy(x, y, type_look='look_max', mean_how=True):
                     2014-07-30    233.6192
                     2014-07-31    222.9308
 
-            x, y = ABuScalerUtil.scaler_xy(x, y, type_look='look_min', mean_how=False)
+            x, y = scaler_util.scaler_xy(x, y, type_look='look_min', mean_how=False)
             output x:
                     2014-07-25    16.4367
                     2014-07-28    16.5286
@@ -420,7 +420,7 @@ def scaler_xy(x, y, type_look='look_max', mean_how=True):
                     2014-07-30    16.8300
                     2014-07-31    16.4168
 
-            x, y = ABuScalerUtil.scaler_xy(x, y, type_look='look_min', mean_how=True)
+            x, y = scaler_util.scaler_xy(x, y, type_look='look_min', mean_how=True)
             output x:
                     2014-07-25    16.1060
                     2014-07-28    16.1961

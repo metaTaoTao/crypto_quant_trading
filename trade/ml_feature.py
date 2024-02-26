@@ -10,14 +10,12 @@ import os
 import numpy as np
 
 from core import env
-# noinspection PyUnresolvedReferences
-from ..CoreBu.ABuFixes import xrange, range, six
-from ..MarketBu import ABuMarketDrawing
-from ..TLineBu import ABuTLAtr
-from ..TLineBu import ABuTLJump
-from ..TLineBu import ABuTLWave
-from ..UtilBu import ABuRegUtil
-from ..UtilBu import ABuStrUtil
+from market import market_drawing
+from tline import tl_atr
+from tline import tl_jump
+from tline import tl_wave
+from utils import reg_util
+from utils import str_util
 
 
 # 内置特征，趋势角度
@@ -52,7 +50,7 @@ class SellFeatureMixin(object):
     _feature_sell_prefix = 'sell_'
 
 
-class AbuFeatureBase(object):
+class FeatureBase(object):
     """特征构造基类"""
 
     def support_buy_feature(self):
@@ -97,7 +95,7 @@ class AbuFeatureBase(object):
     def get_feature_ump_keys(self, ump_cls):
         """
         根据ump_cls，返回对应的get_feature_keys
-        :param ump_cls: AbuUmpEdgeBase子类，参数为类，非实例对象
+        :param ump_cls: UmpEdgeBase子类，参数为类，非实例对象
         :return: 键值对字典中的key序列
         """
         is_buy_ump = getattr(ump_cls, "_ump_type_prefix") == 'buy_'
@@ -123,13 +121,13 @@ class AbuFeatureBase(object):
         raise NotImplementedError('NotImplementedError calc_feature!!!')
 
 
-class AbuFeatureDeg(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
+class FeatureDeg(FeatureBase, BuyFeatureMixin, SellFeatureMixin):
     """角度特征，支持买入，卖出"""
 
     def __init__(self):
         """
             默认21, 42, 60, 250日走势角度特征，如外部修改，直接使用类似如下：
-                       abupy.feature.g_deg_keys = [10, 20, 30, 40, 50]
+                       py.feature.g_deg_keys = [10, 20, 30, 40, 50]
         """
 
         # frozenset包一下，一旦定下来就不能修改，否则特征对不上
@@ -167,7 +165,7 @@ class AbuFeatureDeg(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
                 deg_close = combine_kl_pd[-dk:].close if combine_kl_pd.shape[0] > dk else combine_kl_pd.close
 
             # 使用截取特征交易周期收盘价格deg_close做为参数，通过calc_regress_deg计算趋势拟合角度
-            ang = ABuRegUtil.calc_regress_deg(deg_close, show=False)
+            ang = reg_util.calc_regress_deg(deg_close, show=False)
             # 标准化拟合角度值
             ang = 0 if np.isnan(ang) else round(ang, 3)
             # 角度特征键值对字典添加拟合角度周期key和对应的拟合角度值
@@ -175,13 +173,13 @@ class AbuFeatureDeg(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
         return deg_dict
 
 
-class AbuFeaturePrice(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
+class FeaturePrice(FeatureBase, BuyFeatureMixin, SellFeatureMixin):
     """价格rank特征，支持买入，卖出"""
 
     def __init__(self):
         """
             默认60, 90, 120, 250日价格rank特征，如外部修改，直接使用类似如下：
-                    abupy.feature.g_price_rank_keys = [10, 20, 30, 40，50]
+                    py.feature.g_price_rank_keys = [10, 20, 30, 40，50]
         """
 
         # frozenset包一下，一旦定下来就不能修改，否则特征对不上
@@ -245,13 +243,13 @@ class AbuFeaturePrice(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
         return price_rank_dict
 
 
-class AbuFeatureWave(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
+class FeatureWave(FeatureBase, BuyFeatureMixin, SellFeatureMixin):
     """波动特征，支持买入，卖出"""
 
     def __init__(self):
         """
             默认42日做为波动计算周期，如外部修改，直接使用类似如下：
-                abupy.feature.g_wave_xd = 21
+                py.feature.g_wave_xd = 21
         """
         self.wave_xd = g_wave_xd
         self.wave_key_cnt = g_wave_key_cnt
@@ -288,9 +286,9 @@ class AbuFeatureWave(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
 
         # 返回的波动特征键值对字典
         wave_dict = {}
-        for xd_ind in xrange(1, self.wave_key_cnt + 1):
-            # wave_df固定为一年交易时间序列，xd是calc_wave_st内部计算rolling std的window值，详ABuTLWave.calc_wave_std
-            wave = ABuTLWave.calc_wave_std(wave_df, xd=xd_ind * self.wave_xd, show=False)
+        for xd_ind in range(1, self.wave_key_cnt + 1):
+            # wave_df固定为一年交易时间序列，xd是calc_wave_st内部计算rolling std的window值，详tl_wave.calc_wave_std
+            wave = tl_wave.calc_wave_std(wave_df, xd=xd_ind * self.wave_xd, show=False)
             wave_score = wave.score
             # 标准化波动特征值
             wave_score = 0 if np.isnan(wave_score) else round(wave_score, 3)
@@ -299,13 +297,13 @@ class AbuFeatureWave(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
         return wave_dict
 
 
-class AbuFeatureAtr(AbuFeatureBase, BuyFeatureMixin):
+class FeatureAtr(FeatureBase, BuyFeatureMixin):
     """atr特征，支持买入"""
 
     def __init__(self):
         """
             默认42日做为atr特征计算周期，如外部修改，直接使用类似如下：
-                abupy.feature.g_atr_xd = 21
+                py.feature.g_atr_xd = 21
         """
         self.atr_xd = g_atr_xd
         self.atr_key = 'atr_std'
@@ -341,8 +339,8 @@ class AbuFeatureAtr(AbuFeatureBase, BuyFeatureMixin):
 
         # 返回的atr特征键值对字典
         atr_dict = {}
-        # 计算atr特征，详见ABuTLAtr.calc_atr_std
-        atr_std = ABuTLAtr.calc_atr_std(atr_df, xd=self.atr_xd, show=False)
+        # 计算atr特征，详见tl_atr.calc_atr_std
+        atr_std = tl_atr.calc_atr_std(atr_df, xd=self.atr_xd, show=False)
         atr_score = atr_std.score
         # 标准化atr特征
         atr_score = 0 if np.isnan(atr_score) else round(atr_score, 3)
@@ -351,7 +349,7 @@ class AbuFeatureAtr(AbuFeatureBase, BuyFeatureMixin):
         return atr_dict
 
 
-class AbuFeatureJump(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
+class FeatureJump(FeatureBase, BuyFeatureMixin, SellFeatureMixin):
     """跳空特征，支持买入，卖出"""
 
     def __init__(self):
@@ -401,8 +399,8 @@ class AbuFeatureJump(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
         diff_up_days = 0
         jump_up_power = 0
         key_prefix = self.feature_prefix(buy_feature=buy_feature)
-        # 通过特征周期时间序列jump_df做为参数，计算跳空，返回jumps对象为pd.DataFrame对象，详见ABuTLJump.calc_jump
-        jumps = ABuTLJump.calc_jump(jump_df, show=False)
+        # 通过特征周期时间序列jump_df做为参数，计算跳空，返回jumps对象为pd.DataFrame对象，详见tl_jump.calc_jump
+        jumps = tl_jump.calc_jump(jump_df, show=False)
         """
                 jump形式如下所示：jump代表跳空方向1为向上，－1为向下，jump_power代表对应的跳空能量，即每一行
                 记录了一次跳空发生的时间，价格变化，跳空能量等信息
@@ -447,16 +445,16 @@ class AbuFeatureJump(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
         return jump_dict
 
 
-class AbuFeatureSnapshot(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
+class FeatureSnapshot(FeatureBase, BuyFeatureMixin, SellFeatureMixin):
     """
-        快照特征，支持买入，卖出 abupy.env.g_enable_take_kl_snapshot开关控制特征是否生成，
-        生成的走势图在～/abu/data/save_png/今天的日期/目录下
+        快照特征，支持买入，卖出 py.env.g_enable_take_kl_snapshot开关控制特征是否生成，
+        生成的走势图在～//data/save_png/今天的日期/目录下
     """
 
     def __init__(self):
         """
             默认60日价格做为快照，如外部修改，直接使用类似如下：
-                abupy.feature.g_take_snap_shot_xd = 30
+                py.feature.g_take_snap_shot_xd = 30
         """
         self.take_snap_shot_xd = g_take_snap_shot_xd
         self.snap_key = 'snap'
@@ -482,7 +480,7 @@ class AbuFeatureSnapshot(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
         # 快照生成时间字符串
         tt = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S_%f")
         # 生成64位随机字符串
-        rn = ABuStrUtil.create_random_with_alpha(64)
+        rn = str_util.create_random_with_alpha(64)
         # 快照文件名确定，由于会使用多任务并行，所以加入进程id，和64位随机数，避免产生文件名冲突
         snap_fn = '{}_{}_{}'.format(tt, os.getpid(), rn)
 
@@ -497,12 +495,12 @@ class AbuFeatureSnapshot(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
                 if combine_kl_pd.shape[0] > self.take_snap_shot_xd else combine_kl_pd
 
         # 模块设置，绘制k线图只绘制价格曲线，不绘制成交量
-        ABuMarketDrawing.g_only_draw_price = True
-        # 通过特征周期时间序列snap_window_pd做为参数，绘制交易k线图快照，保存在本地，详ABuMarketDrawing.plot_candle_form_klpd
-        ABuMarketDrawing.plot_candle_form_klpd(snap_window_pd, save=True, name=snap_fn)
+        market_drawing.g_only_draw_price = True
+        # 通过特征周期时间序列snap_window_pd做为参数，绘制交易k线图快照，保存在本地，详market_drawing.plot_candle_form_klpd
+        market_drawing.plot_candle_form_klpd(snap_window_pd, save=True, name=snap_fn)
         # 快照特征键值对字典添加快照特征key和对应的快照特征值
         snap_dict = {'{}{}'.format(self.feature_prefix(buy_feature=buy_feature),
-                                   self.snap_key): ABuMarketDrawing.save_dir_name() + snap_fn + '.png'}
+                                   self.snap_key): market_drawing.save_dir_name() + snap_fn + '.png'}
         return snap_dict
 
 
@@ -514,20 +512,20 @@ def append_user_feature(feature, check=True):
     """
     外部设置扩展feature接口
     :param feature: 可以是feature class类型，也可以是实例化后的feature object
-    :param check: 是否检测feature是AbuFeatureBase实例
+    :param check: 是否检测feature是FeatureBase实例
     :return:
     """
 
-    if isinstance(feature, six.class_types):
+    if isinstance(feature, type):
         # 暂时认为所有feature的实例化不需要参数，如需要也可添加＊args
         feature_obj = feature()
     else:
         # 如果不是类直接赋值
         feature_obj = feature
 
-    # check检测feature_obj是不是AbuFeatureBase的子类实例对象
-    if check and not isinstance(feature_obj, AbuFeatureBase):
-        raise TypeError('feature must a isinstance AbuFeatureBase!!!')
+    # check检测feature_obj是不是FeatureBase的子类实例对象
+    if check and not isinstance(feature_obj, FeatureBase):
+        raise TypeError('feature must a isinstance FeatureBase!!!')
 
     # 添加到用户可扩展自定义特征序列中
     _g_extend_feature_list.append(feature_obj)
@@ -546,10 +544,10 @@ class MlFeature(object):
         """实例化 内置特征对象＋用户扩展自定义特征对象"""
 
         # 内置特征实例化
-        self.features = [AbuFeatureDeg(), AbuFeaturePrice(), AbuFeatureWave(), AbuFeatureAtr(), AbuFeatureJump()]
+        self.features = [FeatureDeg(), FeaturePrice(), FeatureWave(), FeatureAtr(), FeatureJump()]
         if env.g_enable_take_kl_snapshot:
             # 快照特征比较特殊，默认不开启，因为大规模回测比较耗时等开销，故开关控制
-            self.features.append(AbuFeatureSnapshot())
+            self.features.append(FeatureSnapshot())
 
         # 用户扩展自定义特征对象extend到特征对象序列self.features中
         if len(_g_extend_feature_list) > 0:
@@ -558,7 +556,7 @@ class MlFeature(object):
 
     def make_feature_dict(self, kl_pd, combine_kl_pd, day_ind, buy_feature):
         """
-        提供买入卖出因子构建交易特征的接口，使用见AbuFactorBuyBase.make_buy_order_ml_feature
+        提供买入卖出因子构建交易特征的接口，使用见FactorBuyBase.make_buy_order_ml_feature
         :param kl_pd: 择时阶段金融时间序列
         :param combine_kl_pd: 合并择时阶段之前1年的金融时间序列
         :param day_ind: 交易发生的时间索引，即对应self.kl_pd.key
@@ -595,7 +593,7 @@ class MlFeature(object):
 
     def unzip_ml_feature(self, orders_pd):
         """
-        ABuTradeExecute中make_orders_pd使用，将order中dict字典形式的特征解压拆解为独立的
+        TradeExecute中make_orders_pd使用，将order中dict字典形式的特征解压拆解为独立的
         pd.DataFrame列，即一个特征key，对应一个列
         :param orders_pd: 回测结果生成的交易行为构成的pd.DataFrame对象
         :return:
@@ -607,7 +605,7 @@ class MlFeature(object):
             # 收集卖出特征keys
             features_keys.extend(self._get_unzip_feature_keys(False))
 
-            # from ..UtilBu.ABuDTUtil import except_debug
+            # from utils.dt_util import except_debug
             # @except_debug
             def map_str_dict(order, key):
                 if order.sell_type == 'keep' and key.startswith('sell_'):
@@ -627,7 +625,7 @@ class MlFeature(object):
                 orders_pd[fk] = orders_pd.apply(map_str_dict, axis=1, args=(fk,))
 
 
-class AbuFeatureDegExtend(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
+class FeatureDegExtend(FeatureBase, BuyFeatureMixin, SellFeatureMixin):
     """示例添加新的视角来录制比赛，角度特征，支持买入，卖出"""
 
     def __init__(self):
@@ -666,7 +664,7 @@ class AbuFeatureDegExtend(AbuFeatureBase, BuyFeatureMixin, SellFeatureMixin):
                 deg_close = combine_kl_pd[-dk:].close if combine_kl_pd.shape[0] > dk else combine_kl_pd.close
 
             # 使用截取特征交易周期收盘价格deg_close做为参数，通过calc_regress_deg计算趋势拟合角度
-            ang = ABuRegUtil.calc_regress_deg(deg_close, show=False)
+            ang = reg_util.calc_regress_deg(deg_close, show=False)
             # 标准化拟合角度值
             ang = 0 if np.isnan(ang) else round(ang, 3)
             # 角度特征键值对字典添加拟合角度周期key和对应的拟合角度值

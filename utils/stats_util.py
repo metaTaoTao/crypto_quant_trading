@@ -127,7 +127,7 @@ def euclidean_distance_matrix(df, scale_end=True, to_similar=False):
             2016-07-25	230.01	160.25	25.57	4.790	739.77	13.390	97.34
             2016-07-26	225.93	163.09	24.75	4.945	740.92	13.655	97.76
 
-            ABuStatsUtil.euclidean_distance_matrix(cc, scale_start=True)
+            StatsUtil.euclidean_distance_matrix(cc, scale_start=True)
 
             output:
 
@@ -141,7 +141,7 @@ def euclidean_distance_matrix(df, scale_end=True, to_similar=False):
             aapl	0.3713	0.4184	0.7425	0.9558	0.5379	0.7348	0.0000
 
 
-            ABuStatsUtil.euclidean_distance_matrix(cc, scale_start=False)
+            StatsUtil.euclidean_distance_matrix(cc, scale_start=False)
 
                     tsla	bidu	noah	sfun	goog	vips	aapl
             tsla	0.0000	0.0781	0.3314	0.3573	0.6527	0.3386	0.1933
@@ -197,7 +197,7 @@ def manhattan_distance_matrix(df, scale_end=True, to_similar=False):
             2016-07-25	230.01	160.25	25.57	4.790	739.77	13.390	97.34
             2016-07-26	225.93	163.09	24.75	4.945	740.92	13.655	97.76
 
-            ABuStatsUtil.manhattan_distance_matrix(cc, scale_start=True)
+            StatsUtil.manhattan_distance_matrix(cc, scale_start=True)
 
             output:
 
@@ -211,7 +211,7 @@ def manhattan_distance_matrix(df, scale_end=True, to_similar=False):
             aapl	0.3198	0.4000	0.6896	1.0000	0.5134	0.7038	0.0000
 
 
-            ABuStatsUtil.manhattan_distance_matrix(cc, scale_start=False)
+            StatsUtil.manhattan_distance_matrix(cc, scale_start=False)
 
             output:
 
@@ -269,7 +269,7 @@ def cosine_distance_matrix(df, scale_end=True, to_similar=False):
             2016-07-26	225.93	163.09	24.75	4.945	740.92	13.655	97.76
 
 
-            ABuStatsUtil.cosine_distance_matrix(cc, scale_start=True)
+            StatsUtil.cosine_distance_matrix(cc, scale_start=True)
 
             output:
 
@@ -283,7 +283,7 @@ def cosine_distance_matrix(df, scale_end=True, to_similar=False):
             aapl	0.1266	0.1470	0.2632	0.4590	0.2806	0.2669	0.0000
 
 
-            ABuStatsUtil.cosine_distance_matrix(cc, scale_start=False)
+            StatsUtil.cosine_distance_matrix(cc, scale_start=False)
 
             output:
 
@@ -309,7 +309,7 @@ def cosine_distance_matrix(df, scale_end=True, to_similar=False):
 
 def arr_to_pandas(func):
     """
-        函数装饰器：定参数装饰器，非通用，通用转换使用ABuDTUtil中的装饰器
+        函数装饰器：定参数装饰器，非通用，通用转换使用DTUtil中的装饰器
         将被装饰函数中的arr序列转换为pd.DataFrame或者pd.Series
     """
 
@@ -340,7 +340,7 @@ def arr_to_pandas(func):
 
 def arr_to_numpy(func):
     """
-        函数装饰器：定参数装饰器，非通用，通用转换使用ABuDTUtil中的装饰器
+        函数装饰器：定参数装饰器，非通用，通用转换使用DTUtil中的装饰器
         将被装饰函数中的arr序列转换为np.array
     """
 
@@ -378,7 +378,7 @@ def demean(arr, rolling_window=0, show=False):
             2014-07-30	228.92	219.13	16.83	11.78	587.42	21.185	98.15
             2014-07-31	223.30	216.05	16.06	11.47	571.60	20.550	95.60
 
-            ABuStatsUtil.demean(cc.head())
+            StatsUtil.demean(cc.head())
 
                         tsla	bidu	noah	sfun	goog	vips	aapl
             2014-07-25	-1.554	5.004	-0.898	0.104	4.17	0.1846	-0.094
@@ -387,7 +387,7 @@ def demean(arr, rolling_window=0, show=False):
             2014-07-30	3.796	-2.366	0.612	-0.226	2.57	0.0206	0.386
             2014-07-31	-1.824	-5.446	-0.158	-0.536	-13.25	-0.6144	-2.164
 
-            ABuStatsUtil.demean(cc.head().values)
+            StatsUtil.demean(cc.head().values)
 
                 0	1	2	3	4	5	6
             0	-1.554	5.004	-0.898	0.104	4.17	0.1846	-0.094
@@ -404,7 +404,7 @@ def demean(arr, rolling_window=0, show=False):
             2014-07-30    228.92
             2014-07-31    223.30
 
-            ABuStatsUtil.demean(tsla.head())
+            StatsUtil.demean(tsla.head())
 
             2014-07-25   -1.554
             2014-07-28   -0.304
@@ -412,7 +412,7 @@ def demean(arr, rolling_window=0, show=False):
             2014-07-30    3.796
             2014-07-31   -1.824
 
-            ABuStatsUtil.demean(tsla.head().values)
+            StatsUtil.demean(tsla.head().values)
 
                 0
             0	-1.554
@@ -645,7 +645,7 @@ def stats_dict(arr):
 
 
 # noinspection PyClassHasNoInit
-class AbuMomentsTuple(namedtuple('AbuMomentsTuple',
+class MomentsTuple(namedtuple('MomentsTuple',
                                  ('count',
                                   'max',
                                   'min',
@@ -668,7 +668,7 @@ def stats_namedtuple(arr):
     通过序列构造arr的基础统计信息dict, 被arr_to_numpy装饰，统一输出，且这样使用arr.max(), arr.min()等不需要axis参数区别
     与stats_dict的区别只是返回namedtuple对象
     :param arr: pd.DataFrame or pd.Series or Iterable
-    :return: AbuMomentsTuple对象
+    :return: MomentsTuple对象
                 eg:
                     count:504
                     max:286.04
@@ -683,7 +683,7 @@ def stats_namedtuple(arr):
     if len(arr.shape) > 1 and arr.shape[1] > 1:
         count = arr.shape[0] * arr.shape[1]
 
-    return AbuMomentsTuple(count, arr.max(), arr.min(), arr.mean(), arr.std(), scs.skew(arr), scs.kurtosis(arr))
+    return MomentsTuple(count, arr.max(), arr.min(), arr.mean(), arr.std(), scs.skew(arr), scs.kurtosis(arr))
 
 
 def sigmoid(arr):

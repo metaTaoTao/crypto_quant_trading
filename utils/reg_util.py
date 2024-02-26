@@ -26,8 +26,8 @@ def regress_xy(x, y, mode=True, zoom=False, show=False):
     :return: model, y_fit, 如果mode=False，返回的model=None
     """
     if zoom:
-        # 将y值 zoom到与x一个级别，不可用ABuScalerUtil.scaler_xy, 因为不管x > y还y > x都拿 x.max() / y.max()
-        # TODO ABuScalerUtil中添加使用固定轴进行缩放的功能
+        # 将y值 zoom到与x一个级别，不可用scaler_util.scaler_xy, 因为不管x > y还y > x都拿 x.max() / y.max()
+        # TODO scaler_util中添加使用固定轴进行缩放的功能
         zoom_factor = x.max() / y.max()
         y = zoom_factor * y
 
@@ -100,7 +100,7 @@ def regress_xy_polynomial(x, y, poly=1, zoom=False, show=False):
     :return: y_fit
     """
     if zoom:
-        # 将y值 zoom到与x一个级别，不可用ABuScalerUtil.scaler_xy, 因为不管x > y还y > x都拿 x.max() / y.max()
+        # 将y值 zoom到与x一个级别，不可用scaler_util.scaler_xy, 因为不管x > y还y > x都拿 x.max() / y.max()
         zoom_factor = x.max() / y.max()
         y = zoom_factor * y
 
@@ -241,7 +241,7 @@ def valid_poly(y, poly=1, zoom=False, show=True, metrics_func=metrics_rmse):
     valid = False
     x = np.arange(0, len(y))
     if zoom:
-        # 将y值 zoom到与x一个级别，不可用ABuScalerUtil.scaler_xy, 因为不管x > y还y > x都拿 x.max() / y.max()
+        # 将y值 zoom到与x一个级别，不可用scaler_util.scaler_xy, 因为不管x > y还y > x都拿 x.max() / y.max()
         zoom_factor = x.max() / y.max()
         y = zoom_factor * y
     # 对原始曲线y进行窗口均线计算，窗口的大小＝ math.ceil(len(y) / 4)
@@ -315,7 +315,7 @@ def search_best_poly(y, poly_min=1, poly_max=100, zoom=False, show=True, metrics
     """
     x = np.arange(0, len(y))
     if zoom:
-        # 将y值 zoom到与x一个级别，不可用ABuScalerUtil.scaler_xy, 因为不管x > y还y > x都拿 x.max() / y.max()
+        # 将y值 zoom到与x一个级别，不可用scaler_util.scaler_xy, 因为不管x > y还y > x都拿 x.max() / y.max()
         zoom_factor = x.max() / y.max()
         y = zoom_factor * y
     # 对原始曲线y进行窗口均线计算，窗口的大小＝ math.ceil(len(y) / 4)

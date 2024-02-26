@@ -36,7 +36,7 @@ def plot_from_order(plot_nd_func, order, date_ext, **kwargs):
     """
     封装在技术指标上绘制交易order信号通用流程
     :param plot_nd_func: 绘制技术指标的具体实现函数，必须callable
-    :param order: AbuOrder对象转换的pd.DataFrame对象or pd.Series对象
+    :param order: Order对象转换的pd.DataFrame对象or pd.Series对象
     :param date_ext: int对象 eg. 如交易在2015-06-01执行，如date_ext＝120，择start向前推120天，end向后推120天
     :param kwargs: plot_nd_func需要的其它关键字参数，直接透传给plot_nd_func
     """
@@ -59,9 +59,9 @@ def plot_from_order(plot_nd_func, order, date_ext, **kwargs):
 
     # def plot_from_series(p_order):
     #     """
-    #     根据交易的symbol信息买入，卖出时间，以及date_ext完成通过ABuSymbolPd.make_kl_df获取金融时间序列，
+    #     根据交易的symbol信息买入，卖出时间，以及date_ext完成通过SymbolPd.make_kl_df获取金融时间序列，
     #     在成功获取数据后使用plot_nd_func完成买入卖出信号绘制及对应的技术指标绘制
-    #     :param p_order: AbuOrder对象转换的pd.Series对象
+    #     :param p_order: Order对象转换的pd.Series对象
     #     """
     #     # 确定交易对象
     #     target_symbol = p_order['symbol']
@@ -80,9 +80,9 @@ def plot_from_order(plot_nd_func, order, date_ext, **kwargs):
     #         end = DateUtil.begin_date(-date_ext, date_str=end, fix=False)
     #     else:
     #         end = None
-    #     from ..MarketBu import ABuSymbolPd
+    #     from market import symbol_pd
     #     # 组织好参数，确定了请求范围后开始获取金融时间序列数据
-    #     kl_pd = ABuSymbolPd.make_kl_df(target_symbol, start=start, end=end)
+    #     kl_pd = SymbolPd.make_kl_df(target_symbol, start=start, end=end)
     #     if kl_pd is None or kl_pd.shape[0] == 0:
     #         logging.debug(target_symbol + ': has net error in data')
     #         return

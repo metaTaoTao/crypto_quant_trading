@@ -45,7 +45,7 @@ class Order(object):
         """
         根据买入交易日当当天数据以及买入因子，拟合计算买入订单
         :param day_ind: 买入交易发生的时间索引，即对应self.kl_pd.key
-        :param factor_object: ABuFactorBuyBases子类实例对象
+        :param factor_object: FactorBuyBases子类实例对象
         """
         kl_pd = factor_object.kl_pd
         # 要执行买入当天的数据
@@ -66,19 +66,19 @@ class Order(object):
         if bp < np.inf:
             """
                 实例化仓位管理类
-                仓位管理默认保证金比例是1，即没有杠杆，修改ABuPositionBase.g_deposit_rate可提高融资能力，
-                如果margin＝2－>ABuPositionBase.g_deposit_rate = 0.5, 即只需要一半的保证金，也可同过构建
+                仓位管理默认保证金比例是1，即没有杠杆，修改PositionBase.g_deposit_rate可提高融资能力，
+                如果margin＝2－>PositionBase.g_deposit_rate = 0.5, 即只需要一半的保证金，也可同过构建
                 时使用关键字参数完成保证金比例传递
             """
             position = position_class(kl_pd_buy, factor_name, factor_object.kl_pd.name, bp, read_cash,
                                       **factor_object.position_kwargs)
 
-            market = env.g_market_target if ABuMarket.g_use_env_market_set else position.symbol_market
+            market = env.g_market_target if Market.g_use_env_market_set else position.symbol_market
             """
                 由于模块牵扯复杂，暂时不迁移保证金融资相关模块，期货不使用杠杆，即回测不牵扯资金总量的评估
                 if market == EMarketTargetType.E_MARKET_TARGET_FUTURES_CN:
                     deposit_rate = 0.10
-                    q_df = AbuFuturesCn().query_symbol(factor_object.kl_pd.name)
+                    q_df = FuturesCn().query_symbol(factor_object.kl_pd.name)
                     if q_df is not None:
                         deposit_rate = q_df.min_deposit.values[0]
                     # 重新设置保证金比例
@@ -108,13 +108,13 @@ class Order(object):
                 # 向最小的手量看齐
                 buy_cnt -= buy_cnt % min_cnt
             elif market == EMarketTargetType.E_MARKET_TARGET_HK:
-                # 港股从AbuHkUnit读取数据，查询对应symbol每一手的交易数量
-                min_cnt = AbuHkUnit().query_unit(factor_object.kl_pd.name)
+                # 港股从HkUnit读取数据，查询对应symbol每一手的交易数量
+                min_cnt = HkUnit().query_unit(factor_object.kl_pd.name)
                 # 向最小的手量看齐
                 buy_cnt -= buy_cnt % min_cnt
             elif market == EMarketTargetType.E_MARKET_TARGET_FUTURES_CN:
                 # 国内期货，查询最少一手单位
-                min_cnt = AbuFuturesCn().query_min_unit(factor_object.kl_pd.name)
+                min_cnt = FuturesCn().query_min_unit(factor_object.kl_pd.name)
                 # 向最小的手量看齐
                 buy_cnt -= buy_cnt % min_cnt
             elif market == EMarketTargetType.E_MARKET_TARGET_OPTIONS_US:
@@ -123,7 +123,7 @@ class Order(object):
                 buy_cnt -= buy_cnt % min_cnt
             elif market == EMarketTargetType.E_MARKET_TARGET_FUTURES_GLOBAL:
                 # 国际期货, 查询最少一手单位
-                min_cnt = AbuFuturesGB().query_min_unit(factor_object.kl_pd.name)
+                min_cnt = FuturesGB().query_min_unit(factor_object.kl_pd.name)
                 buy_cnt -= buy_cnt % min_cnt
             else:
                 raise TypeError('env.g_market_target ERROR, market={}, g_market_target={}'.format(
@@ -174,7 +174,7 @@ class Order(object):
         """
         根据卖出交易日当当天数据以及卖出因子，拟合计算卖出信息，完成订单
         :param day_ind: 卖出交易发生的时间索引，即对应self.kl_pd.key
-        :param factor_object: AbuFactorSellBase子类实例对象
+        :param factor_object: FactorSellBase子类实例对象
         """
 
         if self.sell_type != 'keep':

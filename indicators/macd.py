@@ -67,7 +67,7 @@ def _calc_macd_from_pd(price, fast_period=12, slow_period=26, signal_period=9):
     return dif, dea, bar
 
 
-"""通过在ABuNDBase中尝试import talib来统一确定指标计算方式"""
+"""通过在NDBase中尝试import talib来统一确定指标计算方式"""
 calc_macd = _calc_macd_from_pd if g_calc_type == ECalcType.E_FROM_PD else _calc_macd_from_ta
 
 
@@ -84,8 +84,8 @@ def plot_macd_from_klpd(kl_pd, with_points=None, with_points_ext=None, **kwargs)
 
 def plot_macd_from_order(order, date_ext=120, **kwargs):
     """
-    封装ABuNDBase中的plot_from_order与模块中绘制技术指标的函数，完成技术指标可视化及标注买入卖出点位
-    :param order: AbuOrder对象转换的pd.DataFrame对象or pd.Series对象
+    封装NDBase中的plot_from_order与模块中绘制技术指标的函数，完成技术指标可视化及标注买入卖出点位
+    :param order: Order对象转换的pd.DataFrame对象or pd.Series对象
     :param date_ext: int对象 eg. 如交易在2015-06-01执行，如date_ext＝120，择start向前推120天，end向后推120天
     :param kwargs: 绘制技术指标需要的其它关键字参数with_price, fast_period, slow_period, signal_period, 最终透传给plot_macd
     """

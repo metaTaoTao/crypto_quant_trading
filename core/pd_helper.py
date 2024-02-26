@@ -53,7 +53,7 @@ def __pd_object_covert_start(iter_obj):
     if isinstance(iter_obj, (pd.Series, pd.DataFrame)):
         # 如果本身就是(pd.Series, pd.DataFrame)，返回对返回值不需要转换，即False
         return iter_obj, False
-    # TODO Iterable和six.string_types的判断抽出来放在一个模块，做为Iterable的判断来使用
+    # TODO Iterable和str的判断抽出来放在一个模块，做为Iterable的判断来使用
     if isinstance(iter_obj, Iterable) and not isinstance(iter_obj, str):
         # 可迭代对象使用pd.Series进行包装，且返回对返回值需要转换为np.array，即True
         return pd.Series(iter_obj), True

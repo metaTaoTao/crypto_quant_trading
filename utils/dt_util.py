@@ -57,13 +57,13 @@ def singleton(cls):
     return get_instance
 
 
-# TODO 放在这里不合适，还要和ABuScalerUtil中的装饰器arr_to_pandas重复代码进行重构
+# TODO 放在这里不合适，还要和scaler_util中的装饰器arr_to_pandas重复代码进行重构
 def arr_to_pandas(arr):
     """
         函数装饰器：将可以迭代的序列转换为pd.DataFrame或者pd.Series，支持
         np.ndarray，list，dict, list，set，嵌套可迭代序列, 混嵌套可迭代序列
     """
-    # TODO Iterable和six.string_types的判断抽出来放在一个模块，做为Iterable的判断来使用
+    # TODO Iterable和str的判断抽出来放在一个模块，做为Iterable的判断来使用
     if not isinstance(arr, Iterable) or isinstance(arr, str):
         return arr
 
@@ -85,7 +85,7 @@ def arr_to_pandas(arr):
 
 def params_to_pandas(func):
     """
-        函数装饰器：不定参数装饰器，定参数转换使用ABuScalerUtil中的装饰器arr_to_pandas(func)
+        函数装饰器：不定参数装饰器，定参数转换使用scaler_util中的装饰器arr_to_pandas(func)
         将被装饰函数中的参数中所有可以迭代的序列转换为pd.DataFrame或者pd.Series
     """
 
@@ -100,13 +100,13 @@ def params_to_pandas(func):
     return wrapper
 
 
-# TODO 放在这里不合适，还要和ABuScalerUtil中的装饰器arr_to_numpy重复代码进行重构
+# TODO 放在这里不合适，还要和scaler_util中的装饰器arr_to_numpy重复代码进行重构
 def arr_to_numpy(arr):
     """
         函数装饰器：将可以迭代的序列转换为np.array，支持pd.DataFrame或者pd.Series
         ，list，dict, list，set，嵌套可迭代序列, 混嵌套可迭代序列
     """
-    # TODO Iterable和six.string_types的判断抽出来放在一个模块，做为Iterable的判断来使用
+    # TODO Iterable和str的判断抽出来放在一个模块，做为Iterable的判断来使用
     if not isinstance(arr, Iterable) or isinstance(arr, str):
         return arr
 
@@ -124,7 +124,7 @@ def arr_to_numpy(arr):
 
 def params_to_numpy(func):
     """
-        函数装饰器：不定参数装饰器，定参数转换使用ABuScalerUtil中的装饰器arr_to_numpy(func)
+        函数装饰器：不定参数装饰器，定参数转换使用scaler_util中的装饰器arr_to_numpy(func)
         将被装饰函数中的参数中所有可以迭代的序列转换为np.array
     """
 
@@ -146,7 +146,7 @@ def catch_error(return_val=None, log=True):
     :param return_val: 异常后返回的值，
                 eg:
                     class A:
-                        @ABuDTUtil.catch_error(return_val=100)
+                        @DTUtil.catch_error(return_val=100)
                         def a_func(self):
                             raise ValueError('catch_error')
                             return 100
@@ -241,7 +241,7 @@ def plt_show():
         在conda5.00封装的matplotlib中全局rc的figsize在使用notebook并且开启直接show的模式下
         代码中显示使用plt.show会将rc中的figsize重置，所以需要显示使用plt.show的地方，通过plt_show
         上下文管理器进行规范控制：
-        1. 上文figsize设置ABuEnv中的全局g_plt_figsize
+        1. 上文figsize设置Env中的全局g_plt_figsize
         2. 下文显示调用plt.show()
     """
     plt.figure(figsize=env.g_plt_figsize)

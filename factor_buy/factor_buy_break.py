@@ -52,7 +52,7 @@ class FactorBuyXDBK(FactorBuyXD, BuyCallMixin):
 
 
 # noinspection PyAttributeOutsideInit
-class AbuFactorBuyPutBreak(FactorBuyBase, BuyPutMixin):
+class FactorBuyPutBreak(FactorBuyBase, BuyPutMixin):
     """示例反向突破买入择时类，混入BuyPutMixin，即向下突破触发买入event，详情请查阅期货回测示例demo"""
 
     def _init_self(self, **kwargs):
@@ -72,7 +72,7 @@ class AbuFactorBuyPutBreak(FactorBuyBase, BuyPutMixin):
         if self.today_ind < self.xd - 1:
             return None
         """
-            与AbuFactorBuyBreak区别就是买向下突破的，即min()
+            与FactorBuyBreak区别就是买向下突破的，即min()
         """
         if today.close == self.kl_pd.close[self.today_ind - self.xd + 1:self.today_ind + 1].min():
             self.skip_days = self.xd
@@ -81,7 +81,7 @@ class AbuFactorBuyPutBreak(FactorBuyBase, BuyPutMixin):
 
 
 # noinspection PyAttributeOutsideInit
-class AbuFactorBuyPutXDBK(FactorBuyXD, BuyPutMixin):
+class FactorBuyPutXDBK(FactorBuyXD, BuyPutMixin):
     """示例继承FactorBuyXD完成反向突破买入择时类"""
     def fit_day(self, today):
         """
@@ -89,7 +89,7 @@ class AbuFactorBuyPutXDBK(FactorBuyXD, BuyPutMixin):
         :param today: 当前驱动的交易日金融时间序列数据
         :return:
         """
-        # 与AbuFactorBuyBreak区别就是买向下突破的，即min()
+        # 与FactorBuyBreak区别就是买向下突破的，即min()
         if today.close == self.xd_kl.close.min():
             return self.buy_tomorrow()
         return None

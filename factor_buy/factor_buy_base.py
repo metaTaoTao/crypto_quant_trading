@@ -52,7 +52,7 @@ class BuyPutMixin(object):
 
 class FactorBuyBase(ParamBase, metaclass=ABCMeta):
     """
-        买入择时策略因子基类：每一个继承AbuFactorBuyBase的子类必须混入一个方向类，
+        买入择时策略因子基类：每一个继承FactorBuyBase的子类必须混入一个方向类，
         且只能混入一个方向类，即具体买入因子必须明确买入方向，且只能有一个买入方向，
         一个因子不能同上又看涨又看跌，
 
@@ -62,10 +62,10 @@ class FactorBuyBase(ParamBase, metaclass=ABCMeta):
 
     def __init__(self, capital, kl_pd, combine_kl_pd, benchmark, **kwargs):
         """
-        :param capital:资金类AbuCapital实例化对象
+        :param capital:资金类Capital实例化对象
         :param kl_pd:择时时段金融时间序列，pd.DataFrame对象
         :param combine_kl_pd:合并了之前一年时间序列的金融时间序列，pd.DataFrame对象
-        :param benchmark: 交易基准对象，AbuBenchmark实例对象, 因子可有选择性使用，比如大盘对比等功能
+        :param benchmark: 交易基准对象，Benchmark实例对象, 因子可有选择性使用，比如大盘对比等功能
         """
         # 择时金融时间序列走势数据
         self.kl_pd = kl_pd
@@ -73,7 +73,7 @@ class FactorBuyBase(ParamBase, metaclass=ABCMeta):
         self.combine_kl_pd = combine_kl_pd
         # 资金情况数据
         self.capital = capital
-        # 交易基准对象，AbuBenchmark实例对象, 因子可有选择性使用，比如大盘对比等功能
+        # 交易基准对象，Benchmark实例对象, 因子可有选择性使用，比如大盘对比等功能
         self.benchmark = benchmark
 
         # 滑点类，默认SlippageBuyMean
@@ -211,7 +211,7 @@ class FactorBuyBase(ParamBase, metaclass=ABCMeta):
             day_ind = self.today_ind
 
         order = Order()
-        # AbuOrde对象根据交易发生的时间索引生成交易订单
+        # Orde对象根据交易发生的时间索引生成交易订单
         order.fit_buy_order(day_ind, self)
 
         if order.order_deal:
@@ -243,7 +243,7 @@ class FactorBuyBase(ParamBase, metaclass=ABCMeta):
 
     def make_buy_order_ml_feature(self, day_ind):
         """
-        根据交易发生的时间索引构通过AbuMlFeature构建买入时刻的各个交易特征
+        根据交易发生的时间索引构通过MlFeature构建买入时刻的各个交易特征
         :param day_ind: 交易发生的时间索引，对应self.kl_pd.key
         :return:
         """
@@ -352,7 +352,7 @@ class FactorBuyBase(ParamBase, metaclass=ABCMeta):
 
         """
             因子可选择根据策略的历史回测设置胜率，期望收益，期望亏损，
-            比如使用AbuKellyPosition，必须需要因子的胜率，期望收益，
+            比如使用KellyPosition，必须需要因子的胜率，期望收益，
             期望亏损参数，不要使用kwargs.pop('a', None)设置，因为
             暂时使用hasattr判断是否有设置属性
         """
